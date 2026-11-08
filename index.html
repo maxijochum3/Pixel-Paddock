@@ -1932,14 +1932,14 @@ const tyreOff = (k, tr) => k === 'H' && tr && SOFT_ALLOC.includes(tr.i) ? 0.2 : 
 // How fast the wear meter runs is compressed between tracks (sqrt), so even on easy circuits a hard lasts ~45 laps of
 // a full race; the time lost per lap of tyre age still follows TRACK_DEG (tyreWearK makes up the difference).
 const tyreWearF = tr => { const d = TRACK_DEG[tr.i] ?? 1; return d >= 1.3 ? d * 1.05 : 1.4 * Math.sqrt(d); };   // high-wear tracks: +5%
-// tyre modes: wear factor, pace (s a lap), small-error and crash factors. The shown tyre life is reached on SAVE;
-// on NORMAL a set is finished at ~85% of it, VERY SAVE stretches it by ~18% (2-3 laps).
-const TMODE = { P: { n: 'FAST', wear: 1.25, pace: -0.35, err: 1.8, crash: 2.2 }, N: { n: 'NORMAL', wear: 1, pace: 0, err: 1, crash: 1 },
-  S: { n: 'SAVE', wear: 0.85, pace: 0.45, err: 0.5, crash: 0.6 }, V: { n: 'VERY SAVE', wear: 0.72, pace: 0.9, err: 0.35, crash: 0.45 } };
+// tyre modes: wear factor, pace (s a lap), small-error and crash factors
+const TMODE = { P: { n: 'FAST', wear: 1.35, pace: -0.35, err: 1.8, crash: 2.2 }, N: { n: 'NORMAL', wear: 1, pace: 0, err: 1, crash: 1 },
+  S: { n: 'SAVE', wear: 0.7, pace: 0.45, err: 0.5, crash: 0.6 } };
 const tmode = c => TMODE[c.mode] || TMODE.N;
-const tyreWearK = tr => 2.25 * Math.pow((TRACK_DEG[tr.i] ?? 1) / tyreWearF(tr), 1.5);
-const tyreRate = (k, tr, lf) => TYRES[k].wear * tyreWearF(tr) * 57 / tr.laps * lf / (0.8 * TMODE.S.wear);
-const tyreLife = (k, tr, lf) => 1 / (tyreRate(k, tr, lf) * TMODE.S.wear);
+const TYRE_WEAR_X = 1.08;   // all tyres wear a little faster (about 8% shorter life)
+const tyreWearK = tr => 4 * Math.pow((TRACK_DEG[tr.i] ?? 1) / tyreWearF(tr), 1.5);
+const tyreRate = (k, tr, lf) => TYRES[k].wear * tyreWearF(tr) * 57 / tr.laps * lf * TYRE_WEAR_X;
+const tyreLife = (k, tr, lf) => 0.8 / tyreRate(k, tr, lf);
 
 // Weather: mostly dry. When it rains it rains for a while (a spell of several laps, never a 2-lap burst), intensity changes
 // gradually, and on rare days a storm (cyclone-strength rain) hits: lots of mistakes, crashes and safety cars.
@@ -1967,18 +1967,15 @@ const pitLoss = (lf, sc) => sc ? Math.max(8, 12 / raceScale(lf)) : Math.max(14.5
 const trafficCost = (tr, lf) => (3 + clamp(14 - tr.ovt, 0, 13) * 1.1) / raceScale(lf);
 // every dry strategy (1 or 2 stops, at least two compounds) from lap `from` with `cur` fitted (or a free choice at the start),
 // sorted by expected race time: [{ t, stops, seq: ['S', 'H'], at: [pit laps] }]
-// strategists plan each stint flat out or on SAVE, whichever is quicker (normal running includes a little saving)
-const PLAN_WEAR = 1.03, PLAN_N = { wear: PLAN_WEAR, pace: 0 }, PLAN_S = { wear: TMODE.S.wear * 1.06, pace: TMODE.S.pace };   // (with a small safety margin for dirty air)
 function planStrats(tr, laps, lf, from = 1, cur = null, w0 = 0, used = []) {
   const ts = raceScale(lf), L = laps - from + 1, P = pitLoss(lf) + trafficCost(tr, lf), memo = {};
   const stint = (k, n, w = 0) => { const key = k + n + '|' + w; if (memo[key] !== undefined) return memo[key];
-    const off = tyreOff(k, tr), wk = tyreWearK(tr), cost = m => { const r = tyreRate(k, tr, lf) * m.wear; let v = 0; for (let j = 0; j < n; j++) v += (off + wearPen(w + j * r, wk)) * ts + m.pace; return v; };
-    return memo[key] = Math.min(cost(PLAN_N), cost(PLAN_S)); };
+    const r = tyreRate(k, tr, lf), off = tyreOff(k, tr), wk = tyreWearK(tr); let v = 0; for (let j = 0; j < n; j++) v += (off + wearPen(w + j * r, wk)) * ts; return memo[key] = v; };
   const out = [], ks = ['S', 'M', 'H'], firsts = cur ? [cur] : ks, step = L > 40 ? 2 : 1;
   const ok = seq => new Set([...used, ...seq]).size >= 2;
   for (const a of firsts) {
     const w = a === cur ? w0 : 0;
-    if (cur && ok([a]) && w + tyreRate(a, tr, lf) * PLAN_WEAR * L < 1.02) out.push({ t: stint(a, L, w), stops: 0, seq: [a], at: [] });
+    if (cur && ok([a]) && w + tyreRate(a, tr, lf) * L < 1.02) out.push({ t: stint(a, L, w), stops: 0, seq: [a], at: [] });
     for (const b of ks) { if (!ok([a, b])) continue; let best = null;
       for (let p = 2; p <= L - 2; p++) { const v = stint(a, p, w) + P + stint(b, L - p); if (!best || v < best.t) best = { t: v, stops: 1, seq: [a, b], at: [from + p] }; }
       if (best) out.push(best);
@@ -2145,7 +2142,7 @@ class Race {
       const pl = c.plan, nextAt = pl && pl.at.find(a => a >= n), nextT = pl && pl.seq[pl.seq.length - pl.at.filter(a => a >= n).length];
       const q = stratQ(c), rate = tyreRate(c.tyre, this.tr, this.lf);
       // tyres going off faster than planned (dirty air, pushing): good strategists bring the stop forward in time
-      if (nextAt != null && !sc && n - (c._rp || 0) > 3 && c.wear + rate * TMODE.V.wear * (nextAt - n) > 1.05 && Math.random() < q) { c._rp = n; this.replan(c, n); }
+      if (nextAt != null && !sc && n - (c._rp || 0) > 3 && c.wear + rate * TMODE.S.wear * (nextAt - n) > 1.1 && Math.random() < q) { c._rp = n; this.replan(c, n); }
       const pl2 = c.plan, nA = pl2 && pl2.at.find(a => a >= n), nT = pl2 && pl2.seq[pl2.seq.length - pl2.at.filter(a => a >= n).length];
       if (nA != null && n >= nA) {
         // mistake: the team leaves the car out too long
@@ -2164,9 +2161,8 @@ class Race {
     }
     if (!want && T.wet && left > 2 && c.wear >= .9) want = 'W';
     if (want && left > 1) c.pitReq = want;
-    const nx = c.plan?.at.find(a => a > n), toStop = T.wet ? 0 : (nx ?? this.laps + 1) - n, proj = c.wear + tyreRate(c.tyre, this.tr, this.lf) * toStop;
     if (c._ns !== c.stops) { c._ns = c.stops; c._noSave = Math.random() < (1 - stratQ(c)) * .35; }
-    c.mode = (left <= 5 && c.wear < 0.85) ? 'P' : c._noSave && proj < 1.2 ? 'N' : proj > 1.05 && left > 3 ? 'V' : (proj > 0.9 || c.wear > 0.7) && left > 3 ? 'S' : 'N';
+    c.mode = (c.wear > 0.65 && left > 5 && !c._noSave) ? 'S' : (left <= 5 && c.wear < 0.85) ? 'P' : 'N';
     if (c.mode === 'N' && c.wear < 0.5 && Math.random() < 0.1) c.mode = 'P';
   }
   // a car's underlying pace right now (no random noise): car, driver, tyres, wear, rain, driving mode and ERS
@@ -3418,7 +3414,7 @@ function pxCarSide(g, x, y, lv, helmet, spin) {
 }
 // patch notes shown on the title screen
 const WHATS_NEW = [
-  ['Latest', ['Tyres: the shown life is reached on SAVE; on NORMAL a set is done about 15% sooner, then it falls off a cliff', 'New VERY SAVE mode: 0.9s a lap slower, 2-3 laps more tyre life',
+  ['Latest', ['Tyres: back to the previous tyre model (FAST / NORMAL / SAVE), with about 8% less tyre life',
     'Hall of fame: world champions (drivers and teams) ranked by titles, with races, wins, win %, podiums and poles', 'Driver profiles show starts again',
     'Youth category only revealed in the season-start email', 'Youths drive for free for one season, then get half the usual pay for their rating',
     'New youth names from around the world, F1 legends included', 'TEAMS tab removed',
@@ -4120,7 +4116,6 @@ SCREENS.prerace = {
       <div class="pre3r"><div class="stack">
         <div class="panel"><h2>WEATHER RADAR</h2><div class="fc">${quarters.map(q => `<div><small>LAPS ${q.a}-${q.b}</small><b style="color:${q.p > 50 ? (q.heavy ? 'var(--violet)' : 'var(--blue)') : 'var(--accent)'}">${q.p > 50 ? (q.heavy ? 'HEAVY RAIN' : 'RAIN') : 'DRY'}</b><small>${q.p}% rain</small></div>`).join('')}</div><small>Forecasts can be wrong.</small></div>
         <div class="panel"><h2>TYRE LIFE AT THIS TRACK</h2>${['S', 'M', 'H'].map(k => `<div class="kv"><span>${tyreIcon(k)} ${TYRES[k].name} <small>${(o => o < 0 ? o + 's' : o > 0 ? '+' + o + 's' : 'base pace')(tyreOff(k, W.tr))}${k === 'H' && SOFT_ALLOC.includes(W.tr.i) ? ' · soft range' : ''}</small></span><span>about ${Math.round(tyreLife(k, W.tr, lf))} laps</span></div>`).join('')}
-          <p class="dim" style="margin:4px 0">Life on SAVE. On NORMAL a set is done about 15% sooner, VERY SAVE adds 2-3 laps. Past the end the tyre falls off a cliff.</p>
           <div class="kv"><span>${tyreIcon('W')} Wet</span><span>faster once the track is wet</span></div></div>
         <div class="panel"><h2>STRATEGY GUIDE</h2>${(() => { const o = planStrats(W.tr, W.laps, W.tr.laps / W.laps), seen = new Set(), rows = [];
             const add = x => { const k = x.stops + ':' + [...x.seq].sort().join(''); if (x && !seen.has(k)) { seen.add(k); rows.push(x); } };
@@ -4187,7 +4182,7 @@ SCREENS.race = {
             <div class="pc-row"><span class="lbl">GAP</span><b data-f="gap" class="num"></b><span class="lbl" style="margin-left:14px">LAST</span><b data-f="last" class="num"></b><span class="lbl" style="margin-left:14px">STOPS</span><b data-f="stops"></b></div>
             <div class="pc-row"><span class="lbl">TYRE</span><span data-f="tyre"></span><span class="wearbar"><i data-f="wearbar"></i></span><b data-f="wear" class="num" style="width:96px;text-align:right;white-space:nowrap"></b></div>
             ${ersMode() === 'off' ? '' : `<div class="pc-row"><span class="lbl">ERS${ersMode() === 'auto' ? ' <small class="acc">AUTO</small>' : ''}</span><span class="wearbar"><i data-f="ebar"></i></span><b data-f="energy" class="num" style="width:96px;text-align:right;white-space:nowrap"></b></div>`}
-            <div class="pc-row"><span class="lbl">TYRES</span>${[['P', 'FAST', 'Faster but wears tyres 25% quicker and risks mistakes'], ['N', 'NORMAL', 'Tyres are finished at about 85% of the shown life'], ['S', 'SAVE', '0.45s a lap slower: the tyres reach their full shown life'], ['V', 'V.SAVE', 'VERY SAVE: 0.9s a lap slower, 2-3 laps more than the shown life']].map(([k, l, tip]) => `<button class="btn sm" data-act="mode" data-id="${c.d.id}" data-m="${k}" title="${tip}">${l}</button>`).join('')}</div>
+            <div class="pc-row"><span class="lbl">TYRES</span>${[['P', 'FAST', 'Faster but wears tyres 35% quicker and risks mistakes'], ['N', 'NORMAL', ''], ['S', 'SAVE', 'Slower but makes the tyres last much longer']].map(([k, l, tip]) => `<button class="btn sm" data-act="mode" data-id="${c.d.id}" data-m="${k}" title="${tip}">${l}</button>`).join('')}</div>
             <div class="pc-row"><span class="lbl">BOX</span>${Object.keys(TYRES).map(k => `<button class="btn sm ty" data-act="pit" data-id="${c.d.id}" data-k="${k}" title="Pit for ${TYRES[k].name}">${k}</button>`).join('')}<button class="btn sm" data-act="pit" data-id="${c.d.id}" data-k="">CANCEL</button></div>
             <div data-f="plan"></div>
             <div class="pc-row"><button class="btn sm" data-act="auto" data-id="${c.d.id}" data-f="autobtn"></button><span data-f="status" class="acc"></span></div></div>`).join('')}</div>
