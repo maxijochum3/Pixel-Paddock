@@ -470,8 +470,9 @@ const upCost = lvl => UP_COST[clamp(lvl, 1, 19) - 1];
 // (a 20 on a 3-season deal: 12 x 1.25 = 15).
 // Where a driver sits in the range depends only on their mood with that team's car: happy = bottom, content = middle, unhappy = top.
 const FEE_RANGE = { 14: [1, 2], 15: [2, 3], 16: [3, 5], 17: [5, 7], 18: [8, 9], 19: [10, 11], 20: [12, 12] };
-const feeOf = (d, mood) => { const r = FEE_RANGE[clamp(Math.round(d.skill), 0, 20)]; if (!r) return 1;
-  return mood === 'happy' ? r[0] : mood === 'unhappy' ? r[1] : r[0] + Math.floor((r[1] - r[0]) / 2); };
+const feeOf = (d, mood) => { const r = FEE_RANGE[clamp(Math.round(d.skill), 0, 20)]; if (!r) return mood === 'unhappy' ? 2 : 1;
+  const mid = r[0] + Math.floor((r[1] - r[0]) / 2);
+  return mood === 'happy' ? r[0] : mood === 'unhappy' ? mid + (d.skill >= 17 ? 2 : 1) : mid; };   // unhappy: 1-2 coins more than normal
 const signFee = (d, tid) => feeOf(d, tid == null ? 'content' : moodWith(d, tid));
 const coin = n => `${n}<i class="ci" aria-label="coins"></i>`;
 
@@ -1747,7 +1748,7 @@ function trimGrid() {
   S.market = { fa: freeAgents().filter(d => !youthFree(d)).map(d => d.id), youth: freeAgents().filter(youthFree).map(d => d.id) };
 }
 function newWorld() {
-  S = { v: 35, year: 2026, round: 0, teams: [], drivers: [], nextId: 1, results: [], history: [], settings: { len: 0.5, speed: 1, qwatch: true, diff: 'hard' }, player: null, sponsor: null, spNext: null, spOffers: [], spDone: {}, interest: {}, news: [], trackStats: TRACKS.map(t => ({ spd: t.spd, cor: t.cor, ovt: t.ovt })) };
+  S = { v: 36, year: 2026, round: 0, teams: [], drivers: [], nextId: 1, results: [], history: [], settings: { len: 0.5, speed: 1, qwatch: true, diff: 'hard' }, player: null, sponsor: null, spNext: null, spOffers: [], spDone: {}, interest: {}, news: [], trackStats: TRACKS.map(t => ({ spd: t.spd, cor: t.cor, ovt: t.ovt })) };
   TEAM_T.forEach((t, i) => { const tm = { id: i, name: t[0], color: t[1], speed: t[2], corner: t[3], pres: 0, coins: 0, inv: 'none' }; tm.pres = presOf(tm); S.teams.push(tm);
     const db = DRIVER_DB[t[0]];
     if (db) for (const [name, sk, tr, age, pot, nat, sched] of db) { const d = mkDriver({ team: i, first: '', last: name, skill: sk, age, pot, nat, tr: [...tr] }); d.pot = pot; if (sched) d.sched = sched.map(x => [...x]); S.drivers.push(d); }
@@ -1902,7 +1903,12 @@ function migrate(s) {
     for (const d of s.drivers) { const n = DRIVER_NUM[d.last]; if (!n || d.first || d.youth || !est.has(d.last) || d.num === n || s.drivers.filter(x => x.last === d.last && !x.first).length !== 1) continue;
       const o = s.drivers.find(x => x !== d && x.num === n); if (o) o.num = d.num; d.num = n; }
   }
-  s.v = 35; return s;
+  if (v < 36) {   // contracts priced under the old scale (AI teams paid 1.5x, unhappy drivers the top of the range): capped
+    const S0 = S; S = s;
+    for (const d of s.drivers) if (d.team !== null && d.con > 0 && d.sal > 0) { const cap = Math.round(feeOf(d, 'unhappy') * CON_MULT[clamp(d.con, 1, 3)]); if (d.sal > cap) d.sal = cap; if (d.sal2 > cap) d.sal2 = cap; }
+    S = S0;
+  }
+  s.v = 36; return s;
 }
 
 // ---------- pace model ----------
@@ -2250,6 +2256,54 @@ class Race {
       c._gA = k ? c.cum[n - 1] - run[k - 1].cum[n - 1] : 99; c._gB = k < run.length - 1 ? run[k + 1].cum[n - 1] - c.cum[n - 1] : 99; c._prev = run[k - 1] || null; c._next = run[k + 1] || null;
       c._near1 = c._near0; c._near0 = [c._gA < 2.5 ? c._prev : null, c._gB < 2.5 ? c._next : null];
     });
+    const late = [];
+    const place = (c, lt, pit, rejoin = false) => {
+        const raw = c.cum[n - 1] + lt + pit;
+        let nt;
+        if (pit > 0 || rejoin) {   // out of the pits, or back on track after a mistake: at its own time, wherever that is in the order
+          nt = raw; for (const t of all) if (Math.abs(t - nt) < 0.2) nt = t + 0.2 + rnd(0, 0.2);
+        } else if (!placed.length) {
+          nt = raw;
+        } else {
+          const back = placed[placed.length - 1];
+          if (scOn) nt = Math.max(back.t + 0.6, Math.min(raw, back.t + 0.6));
+          else if (raw >= back.t + 0.25) nt = raw;
+          else {
+            const delta = back.lt - (lt + pit), adv = this.paceNow(back.c, n) - this.paceNow(c, n);   // adv > 0: the attacker has the underlying pace
+            let p = this.passP(c, back.c, delta, adv, n);
+            if (back.c.pitLap === n) p = 1;
+            const st = this.st, same = c._behind === back.c;
+            if (back.c.pitLap !== n && p > 0) st.att++;
+            let passed = false;
+            if (Math.random() < p) {
+              nt = Math.min(raw, back.t - 0.15);
+              const pp = placed[placed.length - 2];
+              if (pp && nt < pp.t + 0.25) {
+                // in a train: the attacker slots in behind the next car if there's room, and the passed car loses the time
+                if (back.t - pp.t > 0.42) { nt = pp.t + 0.25 + rnd(0, 0.05); back.t = Math.max(back.t, nt + 0.22); back.c.cum[n] = back.t; back.c.lastLt = back.t - back.c.cum[n - 1]; passed = true; }
+                else nt = back.t + 0.25 + rnd(0, 0.2);
+              }
+              if (passed || !(pp && nt >= back.t)) { passed = true; if (c.mine || back.c.mine) this.log(c.mine ? `${dn(c.d)} passes ${dn(back.c.d)}${c.ers === 'P' ? ' on ERS PUSH' : ''}` : `${dn(back.c.d)} is passed by ${dn(c.d)}`, c.mine ? 'me' : ''); if (c.mine) this.fx.push({ c, k: 'pass', t: this.t }); }
+            } else {
+              nt = back.t + 0.25 + rnd(0, 0.35);
+              if (back.c.ers === 'P' && (c.mine || back.c.mine)) { this.log(`${dn(back.c.d)} DEFENDS from ${dn(c.d)}`, back.c.mine ? 'me' : ''); if (back.c.mine) this.fx.push({ c: back.c, k: 'hold', t: this.t }); }
+            }
+            if (back.c.pitLap !== n) {
+              if (passed && adv < -0.3 && delta < 0.3) st.weird = (st.weird || 0) + 1;
+              if (passed) { st.ok++; st.lags.push(same ? c._stuckN || 0 : 0); c._behind = null; c._stuckN = 0; }
+              else { if (p > 0) st.fail++; c._stuckN = same ? (c._stuckN || 0) + 1 : 1; c._behind = back.c; if (adv > 0.3) st.stuck++; }
+            }
+          }
+        }
+        c.cum[n] = nt;
+        const real = nt - c.cum[n - 1] - pit;
+        c.lastLt = nt - c.cum[n - 1];
+        if (!scOn && n > 1 && real < c.best) c.best = real;
+        if (!scOn && n > 1 && real < this.fastest.t) this.fastest = { t: real, c };
+        all.push(nt);
+        if (pit === 0) { const e = { t: nt, lt: nt - c.cum[n - 1], c }; let k = placed.length; while (k > 0 && placed[k - 1].t > nt) k--; placed.splice(k, 0, e); }
+        placed.sort((x, y) => x.t - y.t);   // a passed car may have dropped back
+    };
     for (const c of run) {
       if (c.auto) this.aiDecide(c, n);
       if (ersMode() === 'off') c.ers = 'B'; else if (c.auto || ersMode() === 'auto') this.aiErs(c, n, c._gA, c._gB);
@@ -2279,52 +2333,11 @@ class Race {
           continue;
         }
       }
-      const raw = c.cum[n - 1] + lt + pit;
-      let nt;
-      if (pit > 0) {
-        nt = raw; for (const t of all) if (Math.abs(t - nt) < 0.2) nt = t + 0.2 + rnd(0, 0.2);
-      } else if (!placed.length) {
-        nt = raw;
-      } else {
-        const back = placed[placed.length - 1];
-        if (scOn) nt = Math.max(back.t + 0.6, Math.min(raw, back.t + 0.6));
-        else if (raw >= back.t + 0.25) nt = raw;
-        else {
-          const delta = back.lt - (lt + pit), adv = this.paceNow(back.c, n) - this.paceNow(c, n);   // adv > 0: the attacker has the underlying pace
-          let p = this.passP(c, back.c, delta, adv, n);
-          if (back.c.pitLap === n) p = 1;
-          const st = this.st, same = c._behind === back.c;
-          if (back.c.pitLap !== n && p > 0) st.att++;
-          let passed = false;
-          if (Math.random() < p) {
-            nt = Math.min(raw, back.t - 0.15);
-            const pp = placed[placed.length - 2];
-            if (pp && nt < pp.t + 0.25) {
-              // in a train: the attacker slots in behind the next car if there's room, and the passed car loses the time
-              if (back.t - pp.t > 0.42) { nt = pp.t + 0.25 + rnd(0, 0.05); back.t = Math.max(back.t, nt + 0.22); back.c.cum[n] = back.t; back.c.lastLt = back.t - back.c.cum[n - 1]; passed = true; }
-              else nt = back.t + 0.25 + rnd(0, 0.2);
-            }
-            if (passed || !(pp && nt >= back.t)) { passed = true; if (c.mine || back.c.mine) this.log(c.mine ? `${dn(c.d)} passes ${dn(back.c.d)}${c.ers === 'P' ? ' on ERS PUSH' : ''}` : `${dn(back.c.d)} is passed by ${dn(c.d)}`, c.mine ? 'me' : ''); if (c.mine) this.fx.push({ c, k: 'pass', t: this.t }); }
-          } else {
-            nt = back.t + 0.25 + rnd(0, 0.35);
-            if (back.c.ers === 'P' && (c.mine || back.c.mine)) { this.log(`${dn(back.c.d)} DEFENDS from ${dn(c.d)}`, back.c.mine ? 'me' : ''); if (back.c.mine) this.fx.push({ c: back.c, k: 'hold', t: this.t }); }
-          }
-          if (back.c.pitLap !== n) {
-            if (passed && adv < -0.3 && delta < 0.3) st.weird = (st.weird || 0) + 1;
-            if (passed) { st.ok++; st.lags.push(same ? c._stuckN || 0 : 0); c._behind = null; c._stuckN = 0; }
-            else { if (p > 0) st.fail++; c._stuckN = same ? (c._stuckN || 0) + 1 : 1; c._behind = back.c; if (adv > 0.3) st.stuck++; }
-          }
-        }
-      }
-      c.cum[n] = nt;
-      const real = nt - c.cum[n - 1] - pit;
-      c.lastLt = nt - c.cum[n - 1];
-      if (!scOn && n > 1 && real < c.best) c.best = real;
-      if (!scOn && n > 1 && real < this.fastest.t) this.fastest = { t: real, c };
-      all.push(nt);
-      if (pit === 0) { const e = { t: nt, lt: nt - c.cum[n - 1], c }; let k = placed.length; while (k > 0 && placed[k - 1].t > nt) k--; placed.splice(k, 0, e); }
-      placed.sort((x, y) => x.t - y.t);   // a passed car may have dropped back
+      // a real mistake (spin, off, running wide): that car is placed after everyone else, so only it loses the time
+      if (c._mistake && !scOn && !pit) { late.push([c, lt]); continue; }
+      place(c, lt, pit);
     }
+    for (const [c, lt] of late) place(c, lt, 0, true);
     for (const c of run) if (!c.out) this.tickErs(c);
     this.lap = n;
     if (scOn) { this.sc--; if (this.sc === 0) this.log('Safety car in this lap. Get ready for the restart!', 'wx'); }
@@ -2544,7 +2557,7 @@ function aiFillSeats(notes) {
       let d = ok.length ? ok[big ? 0 : Math.min(ok.length - 1, Math.random() < .6 ? 0 : 1)] : pool[pool.length - 1];
       if (!d) { d = mkYouth(S.year); S.drivers.push(d); }
       if (d.youth && d.ys >= S.year) (S._yj = S._yj || []).push({ d, tm });
-      d.team = tm.id; d.con = big ? 3 : ri(1, 3); d.sal = Math.round(salaryFor(d, d.con, tm.id) * (big ? 1.5 : 1)); if (youthFree(d) && d.con > 1) d.sal2 = Math.round(youthSal2(d, d.con, tm.id) * (big ? 1.5 : 1)); notes && notes.push(`${tm.name} sign ${fn(d)} (${d.con} season${d.con > 1 ? 's' : ''})`);
+      d.team = tm.id; d.con = moodWith(d, tm.id) === 'unhappy' ? 1 : big ? 3 : ri(1, 3); d.sal = salaryFor(d, d.con, tm.id); if (youthFree(d) && d.con > 1) d.sal2 = youthSal2(d, d.con, tm.id); notes && notes.push(`${tm.name} sign ${fn(d)} (${d.con} season${d.con > 1 ? 's' : ''})`);
     }
   }
   for (const d of freeAgents()) {
@@ -3437,7 +3450,7 @@ function pxCarSide(g, x, y, lv, helmet, spin) {
 }
 // patch notes shown on the title screen
 const WHATS_NEW = [
-  ['Latest', ['Hulk is German; Jack #63 and Shdädy (Canada) fixed in running careers too', 'New track ratings for Australia, China, Japan, Bahrain, Saudi Arabia and Canada', 'Rain chance shown for each track is now the real chance of rain in the race (Bahrain, Saudi Arabia and Qatar: never; Istanbul 20%, USA 15%, Singapore 25%)',
+  ['Latest', ['Contracts: an unhappy driver costs only 1-2 coins more and signs for one season at most; AI teams no longer overpay (old contracts are corrected)', 'A driver who spins or goes off only loses time themselves: the cars behind drive on past', 'Hulk is German; Jack #63 and Shdädy (Canada) fixed in running careers too', 'New track ratings for Australia, China, Japan, Bahrain, Saudi Arabia and Canada', 'Rain chance shown for each track is now the real chance of rain in the race (Bahrain, Saudi Arabia and Qatar: never; Istanbul 20%, USA 15%, Singapore 25%)',
     'Tyres: back to the previous tyre model (FAST / NORMAL / SAVE), with about 8% less tyre life',
     'Hall of fame: world champions (drivers and teams) ranked by titles, with races, wins, win %, podiums and poles', 'Driver profiles show starts again',
     'Youth category only revealed in the season-start email', 'Youths drive for free for one season, then get half the usual pay for their rating',
@@ -3823,10 +3836,12 @@ ACT.edback = () => show('newgame');
 // how long a driver will sign for depends on how much they want to be with you: keen drivers sign up to 3 seasons,
 // interested ones 2, drivers with no other offers only 1. Your own drivers renewing: happy 3, content 2, unhappy 1.
 function careerLeft(d) { return d.retAge == null ? 3 : Math.max(0, d.retAge - d.age + (S.phase === 'preseason' || d.pending ? 1 : 0) - (d.pending ? 1 : 0)); }   // seasons left from the contract's first season
+const unhappyWith = d => moodWith(d, S.player) === 'unhappy';
 function maxYears(d) {
   let m;
   if (d.team === S.player) { const md = moodOf(d); m = md === 'happy' ? 3 : md === 'unhappy' ? 1 : 2; }
   else { const v = S.interest?.[d.id]?.v ?? interestOf(d); m = v >= .75 ? 3 : v >= .5 ? 2 : 1; }
+  if (unhappyWith(d)) return 1;   // unhappy with your car: one season at most
   return Math.min(m, Math.max(1, careerLeft(d)));
 }
 const conBtns = (d, act, renew) => [1, 2, 3].map(y => { const mx = maxYears(d), no = y > mx, f = contractFee(d, y);
@@ -3932,7 +3947,7 @@ function showNeg() {
 }
 ACT.neg = d => { const x = drv(+d.id); if (!x) return; if (finalSeason(x) && !x.pending && !(S.phase === 'preseason' && x.age === x.retAge)) return toast(`${fn(x)} retires after this season`); NEG = { id: x.id, years: 1, offer: 0 }; NEG.offer = Math.max(0, negAsk(x, 1) - (x.team === S.player ? 0 : 1)); showNeg(); };
 ACT.negsal = d => { if (!NEG) return; NEG.offer = Math.max(0, NEG.offer + +d.v); showNeg(); };
-ACT.negyr = d => { if (!NEG) return; const x = drv(NEG.id); NEG.years = clamp(NEG.years + +d.v, 1, Math.max(1, Math.min(3, careerLeft(x)))); showNeg(); };
+ACT.negyr = d => { if (!NEG) return; const x = drv(NEG.id); NEG.years = clamp(NEG.years + +d.v, 1, unhappyWith(x) ? 1 : Math.max(1, Math.min(3, careerLeft(x)))); showNeg(); };
 ACT.negclose = () => { NEG = null; showNeg(); };
 ACT.neghire = () => {
   const st = NEG && negState(); if (!st || !st.open || st.col !== 'green') return;
