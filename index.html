@@ -565,7 +565,7 @@ const DRIVER_DB = {
   "Cash Card": [["ArvedgegenLisdorf", 16, [], 18, 17, 'SWE', [[30, 17]]], ["Lullaby", 16, [], 23, 16, 'NZL']],
   "Bunny": [["Beer", 17, [], 20, 18, 'ENG', [[37, 18]]], ["Econ", 15, ["dan"], 29, 14, 'FRA', [[20, 14]]]],
   "James Marcus": [["Ali", 17, ["con", "rain", "ovt"], 44, 16, 'SPA', [[27, 16]]], ["Shdädy", 14, ["inc", "dan", "rain"], 27, 14, 'CAN']],
-  "RevMoney": [["Hulk", 16, ["con", "tyre"], 38, 16, 'USA'], ["Bortoado", 16, ["con"], 21, 19, 'BRA', [[17, 17], [39, 18], [76, 19]]]],
+  "RevMoney": [["Hulk", 16, ["con", "tyre"], 38, 16, 'GER'], ["Bortoado", 16, ["con"], 21, 19, 'BRA', [[17, 17], [39, 18], [76, 19]]]],
   "French Alpha": [["Gardy", 17, [], 29, 17, 'FRA'], ["Spezi", 15, [], 22, 15, 'ARG']],
   "Franks": [["Smooth", 17, ["tyre"], 31, 17, 'SPA'], ["Albanian", 16, ["dan", "inc"], 29, 16, 'THA']],
   "Ceddy": [["Pretzel", 16, ["inc", "tyre", "dan"], 35, 15, 'MEX', [[22, 15]]], ["Baatz", 15, ["inc"], 36, 15, 'FIN']],
@@ -634,14 +634,14 @@ const COLOURS = ['#e8433a', '#ff8a2a', '#f2b632', '#2fbf7f', '#45d6d6', '#3d8fe0
 const TRACK_PROF = [[11, 12, 9], [15, 12, 9], [8, 9, 17], [17, 16, 7], [13, 12, 13], [14, 14, 8], [17, 15, 5], [6, 14, 6], [10, 11, 14], [15, 17, 8], [9, 10, 18], [13, 11, 14],
   [8, 15, 10], [7, 12, 15], [18, 12, 6], [12, 11, 13], [16, 15, 6], [10, 16, 7], [13, 12, 13], [15, 13, 8], [12, 16, 10], [16, 13, 5], [8, 10, 18], [14, 16, 8], [14, 12, 16]];   // Istanbul: Turn 8 punishes following, main straight + Turn 1 to attack
 const TRACKS = [
-  ['Australia', 'AUS', 14, 12, 11, .3, 58, 80], ['China', 'CHN', 13, 13, 15, .3, 56, 95], ['Japan', 'JPN', 13, 18, 6, .35, 53, 91],
-  ['Bahrain', 'BHR', 14, 11, 16, .02, 57, 92], ['Saudi Arabia', 'KSA', 18, 10, 15, .02, 50, 90], ['Miami', 'USA', 15, 10, 12, .15, 57, 90],
-  ['Canada', 'CAN', 16, 8, 15, .35, 70, 74], ['Monaco', 'MON', 3, 18, 1, .2, 78, 73], ['Barcelona', 'ESP', 11, 16, 13, .1, 66, 77],
-  ['Austria', 'AUT', 17, 9, 16, .3, 71, 66], ['Great Britain', 'GBR', 16, 16, 7, .45, 52, 88], ['Belgium', 'BEL', 18, 15, 13, .55, 44, 106],
-  ['Hungary', 'HUN', 7, 18, 4, .2, 70, 79], ['Netherlands', 'NED', 10, 17, 4, .35, 72, 72], ['Italy', 'ITA', 20, 6, 17, .15, 53, 82],
-  ['Imola', 'ITA', 13, 15, 8, .3, 63, 76], ['Baku', 'AZE', 19, 9, 16, .05, 51, 104], ['Singapore', 'SGP', 6, 18, 3, .3, 62, 93],
-  ['USA', 'USA', 14, 15, 12, .1, 56, 96], ['Mexico City', 'MEX', 16, 10, 12, .1, 71, 79], ['Sao Paulo', 'BRA', 14, 12, 13, .5, 71, 72],
-  ['Las Vegas', 'USA', 19, 6, 16, .02, 50, 95], ['Qatar', 'QAT', 15, 15, 6, .02, 57, 84], ['Abu Dhabi', 'UAE', 14, 12, 14, .02, 58, 85],
+  ['Australia', 'AUS', 15, 12, 12, .25, 58, 80], ['China', 'CHN', 14, 14, 14, .25, 56, 95], ['Japan', 'JPN', 8, 18, 12, .33, 53, 91],
+  ['Bahrain', 'BHR', 15, 12, 16, 0, 57, 92], ['Saudi Arabia', 'KSA', 18, 12, 15, 0, 50, 90], ['Miami', 'USA', 15, 10, 12, .1, 57, 90],
+  ['Canada', 'CAN', 16, 8, 15, .4, 70, 74], ['Monaco', 'MON', 3, 18, 1, .14, 78, 73], ['Barcelona', 'ESP', 11, 16, 13, .07, 66, 77],
+  ['Austria', 'AUT', 17, 9, 16, .21, 71, 66], ['Great Britain', 'GBR', 16, 16, 7, .33, 52, 88], ['Belgium', 'BEL', 18, 15, 13, .42, 44, 106],
+  ['Hungary', 'HUN', 7, 18, 4, .14, 70, 79], ['Netherlands', 'NED', 10, 17, 4, .25, 72, 72], ['Italy', 'ITA', 20, 6, 17, .1, 53, 82],
+  ['Imola', 'ITA', 13, 15, 8, .21, 63, 76], ['Baku', 'AZE', 19, 9, 16, .03, 51, 104], ['Singapore', 'SGP', 6, 18, 3, .25, 62, 93],
+  ['USA', 'USA', 14, 15, 12, .15, 56, 96], ['Mexico City', 'MEX', 16, 10, 12, .07, 71, 79], ['Sao Paulo', 'BRA', 14, 12, 13, .5, 71, 72],
+  ['Las Vegas', 'USA', 19, 6, 16, .01, 50, 95], ['Qatar', 'QAT', 15, 15, 6, 0, 57, 84], ['Abu Dhabi', 'UAE', 14, 12, 14, .05, 58, 85],
   ['Istanbul', 'TUR', 15, 16, 12, .2, 58, 86],
 ].map((t, i) => ({ i, name: t[0], cc: t[1], spd: t[2], cor: t[3], ovt: t[4], rain: t[5], laps: t[6], base: t[7], brk: TRACK_PROF[i][0], acc: TRACK_PROF[i][1], dirty: TRACK_PROF[i][2] }));
 const STREET = [4, 7, 16, 17, 21];   // circuits lined by walls
@@ -1747,7 +1747,7 @@ function trimGrid() {
   S.market = { fa: freeAgents().filter(d => !youthFree(d)).map(d => d.id), youth: freeAgents().filter(youthFree).map(d => d.id) };
 }
 function newWorld() {
-  S = { v: 32, year: 2026, round: 0, teams: [], drivers: [], nextId: 1, results: [], history: [], settings: { len: 0.5, speed: 1, qwatch: true, diff: 'hard' }, player: null, sponsor: null, spNext: null, spOffers: [], spDone: {}, interest: {}, news: [], trackStats: TRACKS.map(t => ({ spd: t.spd, cor: t.cor, ovt: t.ovt })) };
+  S = { v: 35, year: 2026, round: 0, teams: [], drivers: [], nextId: 1, results: [], history: [], settings: { len: 0.5, speed: 1, qwatch: true, diff: 'hard' }, player: null, sponsor: null, spNext: null, spOffers: [], spDone: {}, interest: {}, news: [], trackStats: TRACKS.map(t => ({ spd: t.spd, cor: t.cor, ovt: t.ovt })) };
   TEAM_T.forEach((t, i) => { const tm = { id: i, name: t[0], color: t[1], speed: t[2], corner: t[3], pres: 0, coins: 0, inv: 'none' }; tm.pres = presOf(tm); S.teams.push(tm);
     const db = DRIVER_DB[t[0]];
     if (db) for (const [name, sk, tr, age, pot, nat, sched] of db) { const d = mkDriver({ team: i, first: '', last: name, skill: sk, age, pot, nat, tr: [...tr] }); d.pot = pot; if (sched) d.sched = sched.map(x => [...x]); S.drivers.push(d); }
@@ -1761,12 +1761,13 @@ function newWorld() {
   for (const d of S.drivers) { const c = START_CONTRACT[d.last]; if (c && d.team !== null) { d.con = c[0]; d.sal = c[1]; } }
   // world titles won before 2026
   for (const [n, k] of Object.entries(PAST_TITLES)) { const d = S.drivers.find(x => x.last === n && !x.first); if (d) d.c.ti = k; }
-  for (const d of S.drivers) seedCareer(d);
+  for (const d of S.drivers) if (d.team !== null) seedCareer(d);
   for (const d of S.drivers) setRetAge(d);   // (past titles are set before this, so champions race on longer)
   for (const d of S.drivers) if (RET_AGE[d.last] && !d.first) { d.retAge = Math.max(d.age, RET_AGE[d.last]); d.retFix = true; }
 }
 function applyDriverNums(list) {
-  for (const d of list) { const n = DRIVER_NUM[d.last]; if (!n || d.first) continue; const other = list.find(o => o !== d && o.num === n); if (other) { let k; do k = ri(2, 99); while (list.some(o => o.num === k) || Object.values(DRIVER_NUM).includes(k)); other.num = k; } d.num = n; }
+  for (const d of list) { const n = DRIVER_NUM[d.last]; if (!n || d.first || d.team === null) continue;   // (a reserve driver with the same name doesn't take the number)
+    const other = list.find(o => o !== d && o.num === n); if (other) { let k; do k = ri(2, 99); while (list.some(o => o.num === k) || Object.values(DRIVER_NUM).includes(k)); other.num = k; } d.num = n; }
 }
 function migrate(s) {
   const v = s.v || 1;
@@ -1885,7 +1886,23 @@ function migrate(s) {
     for (const r of (s.results || [])) for (const t of s.teams) { const m = r.rows.filter(x => x.t === t.id); if (!m.length) continue; const c = t.cs; c.st++; c.w += m.some(x => !x.dnf && x.pos === 1) ? 1 : 0; c.pod += m.filter(x => !x.dnf && x.pos <= 3).length; c.pol += m.some(x => x.grid === 1) ? 1 : 0; }
     S = S0;
   }
-  s.v = 32; return s;
+  if (v < 33) {   // new track ratings, and the established drivers' race numbers and nationalities, also in running careers
+    for (const n of ['Australia', 'China', 'Japan', 'Bahrain', 'Saudi Arabia', 'Canada']) { const t = TRACKS.find(x => x.name === n); if (t && s.trackStats?.[t.i]) s.trackStats[t.i] = { spd: t.spd, cor: t.cor, ovt: t.ovt }; }
+    const nat = {}; for (const list of Object.values(DRIVER_DB)) for (const e of list) nat[e[0]] = e[5];
+    for (const d of s.drivers) if (!d.first && nat[d.last] && !d.youth && s.drivers.filter(x => x.last === d.last && !x.first).length === 1) { d.nat = nat[d.last];
+      const n = DRIVER_NUM[d.last]; if (n && d.num !== n) { const o = s.drivers.find(x => x !== d && x.num === n); if (o) o.num = d.num; d.num = n; } }
+    for (const x of (s.legends || [])) if (nat[x.name]) x.nat = nat[x.name];
+  }
+  if (v < 34) {   // nationalities again (a save could have skipped them): the established drivers' are fixed
+    const nat = {}; for (const list of Object.values(DRIVER_DB)) for (const e of list) nat[e[0]] = e[5];
+    for (const d of s.drivers) if (!d.first && nat[d.last] && !d.youth && s.drivers.filter(x => x.last === d.last && !x.first).length === 1) d.nat = nat[d.last];
+  }
+  if (v < 35) {   // race numbers of the established drivers (a reserve namesake could have taken one)
+    const est = new Set(Object.values(DRIVER_DB).flat().map(e => e[0]));
+    for (const d of s.drivers) { const n = DRIVER_NUM[d.last]; if (!n || d.first || d.youth || !est.has(d.last) || d.num === n || s.drivers.filter(x => x.last === d.last && !x.first).length !== 1) continue;
+      const o = s.drivers.find(x => x !== d && x.num === n); if (o) o.num = d.num; d.num = n; }
+  }
+  s.v = 35; return s;
 }
 
 // ---------- pace model ----------
@@ -1951,12 +1968,15 @@ function genWeather(tr, laps) {
     if (len >= 9 && Math.random() < .55) { const h0 = a + Math.round(len * rnd(.2, .35)), h1 = a + Math.round(len * rnd(.6, .8)); span(h0, h1, 2);
       if (h1 - h0 >= 4 && Math.random() < .3 + r * .4) { const s0 = h0 + 1, s1 = Math.min(h1 - 1, s0 + ri(4, 8)); span(s0, s1, 3); } }   // a storm inside the heavy rain
   };
-  const cloudy = Math.random() < 0.2 + r * 0.9, roll = Math.random();
-  if (roll < r * 0.3) { const len = Math.random() < .4 ? laps + 2 : ri(minLen, laps); profile(0, len); }   // wet start
-  else if (Math.random() < (cloudy ? r * 0.6 : r * 0.08)) { const len = Math.min(laps, ri(minLen, Math.max(minLen, Math.round(laps * .7)))), a = ri(2, Math.max(2, laps - Math.round(len * .6))); profile(a, len); }
-  return { wx: arr, cloudy: cloudy || arr.some(x => x) };
+  // r is the chance that it rains at some point in the race; about a third of wet races start wet
+  if (Math.random() < r) {
+    if (Math.random() < .35) { const len = Math.random() < .4 ? laps + 2 : ri(minLen, laps); profile(0, len); }   // wet start
+    else { const len = Math.min(laps, ri(minLen, Math.max(minLen, Math.round(laps * .7)))), a = ri(2, Math.max(2, laps - Math.round(len * .6))); profile(a, len); }
+  }
+  const cloudy = arr.some(x => x) || Math.random() < Math.min(.9, r * 1.2);   // grey skies (the radar may warn) without rain too
+  return { wx: arr, cloudy };
 }
-const rainChance = tr => { const r = tr.rain, c = 0.2 + r * 0.9; return r * 0.45 + (1 - r * 0.45) * (c * r * 0.55 + (1 - c) * r * 0.08); };
+const rainChance = tr => tr.rain;   // the chance of rain during the race
 
 // ---------- race strategy ----------
 // In a shorter race each lap stands for several real laps, so tyre effects grow and pit stops shrink by sqrt(lf):
@@ -2051,7 +2071,7 @@ class Race {
     for (let n = 1; n <= this.laps; n++) { const a = this.w(n - 1), b = this.w(n); if (a === b) continue;
       const kind = b === 3 ? 'storm' : a === 0 ? 'rain' : b === 0 ? 'dry' : b > a ? 'heavier' : 'easing';
       ev.push({ k: n, kind, lo: n - 1 - Math.floor(R() * 3), hi: n + 1 + Math.floor(R() * 3), p: 55 + Math.floor(R() * 35) }); }
-    if (!this.wx.some(x => x) && R() < .3) { const k = 4 + Math.floor(R() * Math.max(1, this.laps - 6)); ev.push({ k, kind: 'rain', lo: k - 2, hi: k + 3, p: 20 + Math.floor(R() * 25), fake: true }); }
+    if (!this.wx.some(x => x) && this.tr.rain > 0 && R() < .3) { const k = 4 + Math.floor(R() * Math.max(1, this.laps - 6)); ev.push({ k, kind: 'rain', lo: k - 2, hi: k + 3, p: 20 + Math.floor(R() * 25), fake: true }); }
     return ev.sort((a, b) => a.k - b.k);
   }
   radarText(lap) {
@@ -2392,9 +2412,9 @@ function outlook(d) {
 }
 // Youth categories (visible): the category hints at the hidden potential. Ratings stay hidden in their first season.
 const YOUTH_CAT = {
-  jm: { n: 'JOURNEYMAN', col: '#8f8fb3', pot: [13, 14], gap: [1, 2] },
+  jm: { n: 'JOURNEYMAN', col: '#8f8fb3', pot: [10, 14], gap: [1, 2] },
   gd: { n: 'GREAT DRIVER', col: '#4da6ff', pot: [15, 17], gap: [1, 3] },
-  st: { n: 'STAR IN THE MAKING', col: '#ffcc33', pot: [18, 20], gap: [1, 4] },
+  st: { n: 'STAR IN THE MAKING', col: '#ffcc33', pot: [17, 20], gap: [1, 4] },
 };
 const youthCatOf = pot => pot >= 18 ? 'st' : pot >= 15 ? 'gd' : 'jm';
 // the category is still a roll of the dice, but it leans towards whatever the grid is short of, so over the years the
@@ -2422,8 +2442,9 @@ function youthName() {
 }
 function mkYouth(year, o = {}) {
   const cat = o.cat ?? youthCatRoll(), C = YOUTH_CAT[cat];
-  let pot = cat === 'st' ? (Math.random() < .25 ? 18 : Math.random() < .25 && can20() ? 20 : 19) : ri(C.pot[0], C.pot[1]); if (pot >= 20 && !can20()) pot = 19;
-  const skill = Math.random() < .2 ? pot : clamp(pot - ri(C.gap[0], C.gap[1]), 11, 17);   // 1 in 5 is already at their peak
+  let pot = ri(C.pot[0], C.pot[1]);
+  if (cat === 'st') { const r = Math.random(); pot = r < .2 ? 17 : r < .5 ? 18 : r < .85 ? 19 : 20; } if (pot >= 20 && !can20()) pot = 19;   // stars: 17 (20%), 18 (30%), 19 (35%), 20 (15%, rare)
+  const skill = Math.random() < .2 ? pot : clamp(pot - ri(C.gap[0], C.gap[1]), 8, 17);   // (a star can start at 16 with a potential of 20)   // 1 in 5 is already at their peak
   const nm = o.last === undefined ? youthName() : {};
   const y = mkDriver({ age: 18, skill, pot, tr: Math.random() < .5 ? randTraits() : [], f: Math.random() < .17, ...nm, ...o });
   // fixed at the start of the career: retirement age (from the potential) and, for some, a -1 in the last or second-last season
@@ -2434,7 +2455,7 @@ function mkYouth(year, o = {}) {
 }
 // the category is only revealed once the youth is signed and the season has started (before their first race)
 const catVisible = d => d.team !== null && (S.phase !== 'preseason' || d.ys < S.year);
-const catTag = d => !d.youth || !d.cat ? '' : ` <span class="trait" style="color:var(--green)" title="Youth driver">YOUTH</span>`;
+const catTag = d => '';   // no youth label anywhere: the category is only revealed in the season-start email
 // Development during the season, run after every race. Young drivers grow toward (never past) their potential;
 // drivers past 30 slowly lose rating, faster the older they are. Changes come from accumulators, so they are gradual.
 function developDrivers(rows, news, changes) {
@@ -3154,7 +3175,7 @@ const FLAG = { ITA: ['v', '#009246', '#fff', '#ce2b37'], FRA: ['v', '#0055a4', '
   ENG: ['x', '#fff', '#ce1124'], GBR: ['x', '#012169', '#c8102e'], FIN: ['n', '#fff', '#002f6c'], SWE: ['n', '#006aa7', '#fecc00'], NOR: ['n', '#ba0c2f', '#00205b'], DEN: ['n', '#c8102e', '#fff'],
   JPN: ['d', '#fff', '#bc002d'], CAN: ['d', '#fff', '#d52b1e'], BRA: ['d', '#009c3b', '#ffdf00'], TUR: ['d', '#e30a17', '#fff'], SUI: ['x', '#d52b1e', '#fff'],
   USA: ['h', '#b22234', '#fff', '#b22234', '#fff', '#b22234'], AUS: ['h', '#012169', '#012169'], NZL: ['h', '#012169', '#012169'], CHN: ['h', '#de2910', '#de2910'], IND: ['h', '#ff9933', '#fff', '#138808'] };
-Object.assign(FLAG, { NET: FLAG.NED, JAM: ['x', '#009b3a', '#fed100'], AFG: ['v', '#000', '#d32011', '#007a36'], PSE: ['h', '#000', '#fff', '#007a3d'], RSA: ['h', '#e03c31', '#fff', '#001489'], NGA: ['v', '#008751', '#fff', '#008751'], KOR: ['d', '#fff', '#cd2e3a'], RUS: ['h', '#fff', '#0039a6', '#d52b1e'], UKR: ['h', '#0057b7', '#ffd700'], HUN: ['h', '#ce2939', '#fff', '#477050'], ROU: ['v', '#002b7f', '#fcd116', '#ce1126'], BUL: ['h', '#fff', '#00966e', '#d62612'], EST: ['h', '#0072ce', '#000', '#fff'], LTU: ['h', '#fdb913', '#006a44', '#c1272d'], LAT: ['h', '#9e3039', '#fff', '#9e3039'], POR: ['v', '#006600', '#ff0000', '#ff0000'], GRE: ['h', '#0d5eaf', '#fff', '#0d5eaf', '#fff', '#0d5eaf'], CZE: ['h', '#fff', '#d7141a'], SVK: ['h', '#fff', '#0b4ea2', '#ee1c25'], CRO: ['h', '#ff0000', '#fff', '#171796'], SRB: ['h', '#c6363c', '#0c4076', '#fff'], SLO: ['h', '#fff', '#005da4', '#ed1c24'], CHI: ['h', '#fff', '#d52b1e'], PER: ['v', '#d91023', '#fff', '#d91023'], VEN: ['h', '#ffcc00', '#00247d', '#cf142b'], URU: ['h', '#fff', '#0038a8', '#fff', '#0038a8', '#fff'], EGY: ['h', '#ce1126', '#fff', '#000'], MAR: ['d', '#c1272d', '#006233'], KEN: ['h', '#000', '#bb0000', '#006600'], GHA: ['h', '#ce1126', '#fcd116', '#006b3f'], ETH: ['h', '#078930', '#fcdd09', '#da121a'], PAK: ['v', '#fff', '#01411c', '#01411c'], INA: ['h', '#ce1126', '#fff'], VIE: ['d', '#da251d', '#ffcd00'], PHI: ['h', '#0038a8', '#ce1126'], MAS: ['h', '#cc0001', '#fff', '#cc0001', '#fff'], SGP: ['h', '#ef3340', '#fff'], ISR: ['h', '#fff', '#0038b8', '#fff'], KSA: ['d', '#006c35', '#fff'], UAE: ['h', '#00732f', '#fff', '#000'], IRN: ['h', '#239f40', '#fff', '#da0000'], IRQ: ['h', '#ce1126', '#fff', '#000'], LBN: ['h', '#ed1c24', '#fff', '#fff', '#ed1c24'], CUB: ['h', '#002a8f', '#fff', '#002a8f', '#fff', '#002a8f'], QAT: ['v', '#fff', '#8a1538', '#8a1538'] });
+Object.assign(FLAG, { CAN: ['ca'], USA: ['us'], NET: FLAG.NED, JAM: ['x', '#009b3a', '#fed100'], AFG: ['v', '#000', '#d32011', '#007a36'], PSE: ['h', '#000', '#fff', '#007a3d'], RSA: ['h', '#e03c31', '#fff', '#001489'], NGA: ['v', '#008751', '#fff', '#008751'], KOR: ['d', '#fff', '#cd2e3a'], RUS: ['h', '#fff', '#0039a6', '#d52b1e'], UKR: ['h', '#0057b7', '#ffd700'], HUN: ['h', '#ce2939', '#fff', '#477050'], ROU: ['v', '#002b7f', '#fcd116', '#ce1126'], BUL: ['h', '#fff', '#00966e', '#d62612'], EST: ['h', '#0072ce', '#000', '#fff'], LTU: ['h', '#fdb913', '#006a44', '#c1272d'], LAT: ['h', '#9e3039', '#fff', '#9e3039'], POR: ['v', '#006600', '#ff0000', '#ff0000'], GRE: ['h', '#0d5eaf', '#fff', '#0d5eaf', '#fff', '#0d5eaf'], CZE: ['h', '#fff', '#d7141a'], SVK: ['h', '#fff', '#0b4ea2', '#ee1c25'], CRO: ['h', '#ff0000', '#fff', '#171796'], SRB: ['h', '#c6363c', '#0c4076', '#fff'], SLO: ['h', '#fff', '#005da4', '#ed1c24'], CHI: ['h', '#fff', '#d52b1e'], PER: ['v', '#d91023', '#fff', '#d91023'], VEN: ['h', '#ffcc00', '#00247d', '#cf142b'], URU: ['h', '#fff', '#0038a8', '#fff', '#0038a8', '#fff'], EGY: ['h', '#ce1126', '#fff', '#000'], MAR: ['d', '#c1272d', '#006233'], KEN: ['h', '#000', '#bb0000', '#006600'], GHA: ['h', '#ce1126', '#fcd116', '#006b3f'], ETH: ['h', '#078930', '#fcdd09', '#da121a'], PAK: ['v', '#fff', '#01411c', '#01411c'], INA: ['h', '#ce1126', '#fff'], VIE: ['d', '#da251d', '#ffcd00'], PHI: ['h', '#0038a8', '#ce1126'], MAS: ['h', '#cc0001', '#fff', '#cc0001', '#fff'], SGP: ['h', '#ef3340', '#fff'], ISR: ['h', '#fff', '#0038b8', '#fff'], KSA: ['d', '#006c35', '#fff'], UAE: ['h', '#00732f', '#fff', '#000'], IRN: ['h', '#239f40', '#fff', '#da0000'], IRQ: ['h', '#ce1126', '#fff', '#000'], LBN: ['h', '#ed1c24', '#fff', '#fff', '#ed1c24'], CUB: ['h', '#002a8f', '#fff', '#002a8f', '#fff', '#002a8f'], QAT: ['v', '#fff', '#8a1538', '#8a1538'] });
 function flagEl(nat) {
   const f = FLAG[nat]; if (!f) return `<small class="dim">${esc(nat || '')}</small>`;
   const [k, ...c] = f; let inner = '';
@@ -3162,6 +3183,8 @@ function flagEl(nat) {
   else if (k === 'h') inner = c.map((col, i) => `<rect x="0" y="${i * 20 / c.length}" width="30" height="${20 / c.length + .5}" fill="${col}"/>`).join('');
   else if (k === 'x') inner = `<rect width="30" height="20" fill="${c[0]}"/><rect x="12" width="6" height="20" fill="${c[1]}"/><rect y="7" width="30" height="6" fill="${c[1]}"/>`;
   else if (k === 'n') inner = `<rect width="30" height="20" fill="${c[0]}"/><rect x="8" width="5" height="20" fill="${c[1]}"/><rect y="7.5" width="30" height="5" fill="${c[1]}"/>`;
+  else if (k === 'ca') inner = `<rect width="30" height="20" fill="#fff"/><rect width="7.5" height="20" fill="#d52b1e"/><rect x="22.5" width="7.5" height="20" fill="#d52b1e"/><path d="M15 4 L16.2 6.6 L18 6 L17.3 9.4 L19.6 8.6 L19 10.4 L20.6 11 L17 13.6 L17.4 15 L15.4 14.7 L15.4 17 L14.6 17 L14.6 14.7 L12.6 15 L13 13.6 L9.4 11 L11 10.4 L10.4 8.6 L12.7 9.4 L12 6 L13.8 6.6 Z" fill="#d52b1e"/>`;
+  else if (k === 'us') inner = [...Array(7)].map((_, i) => `<rect y="${i * 20 / 6.5}" width="30" height="${20 / 13}" fill="#b22234"/>`).join('').replace(/^/, '<rect width="30" height="20" fill="#fff"/>') + `<rect width="13" height="10.8" fill="#3c3b6e"/>`;
   else inner = `<rect width="30" height="20" fill="${c[0]}"/><circle cx="15" cy="10" r="5.5" fill="${c[1]}"/>`;
   return `<svg class="flag" viewBox="0 0 30 20" aria-label="${esc(nat)}">${inner}</svg>`;
 }
@@ -3414,7 +3437,8 @@ function pxCarSide(g, x, y, lv, helmet, spin) {
 }
 // patch notes shown on the title screen
 const WHATS_NEW = [
-  ['Latest', ['Tyres: back to the previous tyre model (FAST / NORMAL / SAVE), with about 8% less tyre life',
+  ['Latest', ['Hulk is German; Jack #63 and Shdädy (Canada) fixed in running careers too', 'New track ratings for Australia, China, Japan, Bahrain, Saudi Arabia and Canada', 'Rain chance shown for each track is now the real chance of rain in the race (Bahrain, Saudi Arabia and Qatar: never; Istanbul 20%, USA 15%, Singapore 25%)',
+    'Tyres: back to the previous tyre model (FAST / NORMAL / SAVE), with about 8% less tyre life',
     'Hall of fame: world champions (drivers and teams) ranked by titles, with races, wins, win %, podiums and poles', 'Driver profiles show starts again',
     'Youth category only revealed in the season-start email', 'Youths drive for free for one season, then get half the usual pay for their rating',
     'New youth names from around the world, F1 legends included', 'TEAMS tab removed',
@@ -3892,7 +3916,7 @@ function showNeg() {
   const canHire = open && col === 'green' && (renew || seats > 0);
   el.innerHTML = `<div class="panel modal-in" style="width:min(820px,100%)"><div class="grid2">
     <div class="stack">
-      <div class="tl" style="border:2px solid var(--line);padding:8px"><small class="dim">Driver · #${d.num}</small><div class="row" style="gap:8px">${flagEl(d.nat)}<b style="font-size:24px">${esc(dn(d))}</b>${titleStars(d)}${bondTag(d)}<span class="spacer"></span>${moodFace(renew ? moodOf(d) : moodWith(d, S.player))}</div><small>rating ${skl(d)} · age ${d.age}${d.youth ? ' · ' + ('YOUTH') : ''}</small></div>
+      <div class="tl" style="border:2px solid var(--line);padding:8px"><small class="dim">Driver · #${d.num}</small><div class="row" style="gap:8px">${flagEl(d.nat)}<b style="font-size:24px">${esc(dn(d))}</b>${titleStars(d)}${bondTag(d)}<span class="spacer"></span>${moodFace(renew ? moodOf(d) : moodWith(d, S.player))}</div><small>rating ${skl(d)} · age ${d.age}</small></div>
       ${renew || d.sal != null ? `<div class="kv"><span>Existing salary</span><b>${d.sal ? '-' + coin(d.sal) : '—'}</b></div>` : ''}
       <div class="row" style="gap:8px;flex-wrap:nowrap"><button class="btn" data-act="negsal" data-v="-1" ${free || NEG.offer <= 0 ? 'disabled' : ''}>−</button><div style="flex:1;border:2px solid var(--line);padding:6px 10px"><small class="dim">Salary offer</small><br><b style="font-size:24px">${free ? 'FREE' : '-' + coin(NEG.offer)}</b> <small>/race</small></div><button class="btn" data-act="negsal" data-v="1" ${free ? 'disabled' : ''}>+</button></div>
       <div class="row" style="gap:8px;flex-wrap:nowrap"><button class="btn" data-act="negyr" data-v="-1" ${NEG.years <= 1 ? 'disabled' : ''}>−</button><div style="flex:1;border:2px solid var(--line);padding:6px 10px"><small class="dim">Contract offer</small><br><b style="font-size:24px">${NEG.years} season${NEG.years > 1 ? 's' : ''}</b></div><button class="btn" data-act="negyr" data-v="1" ${NEG.years >= Math.min(3, careerLeft(d)) ? 'disabled' : ''}>+</button></div>
@@ -4660,12 +4684,13 @@ SCREENS.players = {
     const stTag = r => r.ok === true ? '<span class="green">ACCEPTED</span>' : r.ok === false ? '<span class="red">BLOCKED</span>' : '<span class="acc blink">WAITING</span>';
     return `<div class="wrap"><div class="row" style="justify-content:space-between;margin:10px 0"><h2>PLAYERS</h2><button class="btn" data-act="totitle">BACK</button></div>
       <div class="panel"><p class="dim">${window.PP_WEB ? 'Send friends the website link. They sign in with Google, enter their name and agree to share their saves; accept them here.' : 'Friends need a claude.ai account. Invite each one by email in the <b>Share</b> menu as <b>Contributor</b>, send them the link, and accept their request here.'} Everyone listed agreed that you can read their saves.</p>
-      ${!PL ? '<p class="dim">Loading…</p>' : rows.length ? `<div style="overflow-x:auto"><table class="tbl"><tr><th>NAME</th><th>STATUS</th><th>AGREED</th><th>PROGRESS</th><th></th></tr>${rows.map(r => `<tr>
-        <td><b>${esc(r.name || '?')}</b></td><td>${stTag(r)}</td><td><small>${r.consentAt ? new Date(r.consentAt).toLocaleDateString() : '—'}</small></td>
-        <td><small>${r.last ? `${esc(r.last.team)} · ${r.last.year} round ${Math.min(r.last.round + 1, ROUNDS)} · ${new Date(r.last.at).toLocaleDateString()}` : 'not started'}</small></td>
-        <td><div class="row" style="gap:6px;flex-wrap:wrap">${r.ok !== true ? `<button class="btn sm go" data-act="plok" data-id="${esc(r.id)}">ACCEPT</button>` : ''}${r.ok !== false ? `<button class="btn sm warn" data-act="plno" data-id="${esc(r.id)}">BLOCK</button>` : ''}
+      ${!PL ? '<p class="dim">Loading…</p>' : rows.length ? rows.map(r => `<div style="border-top:2px solid var(--line);padding:10px 0">
+        <div class="row" style="gap:12px;flex-wrap:wrap;align-items:baseline"><b style="font-size:18px">${esc(r.name || '?')}</b>${stTag(r)}
+          <small class="dim">agreed ${r.consentAt ? new Date(r.consentAt).toLocaleDateString() : '—'}</small>
+          <small class="dim">${r.last ? `${esc(r.last.team)} · ${r.last.year} round ${Math.min(r.last.round + 1, ROUNDS)} · ${new Date(r.last.at).toLocaleDateString()}` : 'not started'}</small></div>
+        <div class="row" style="gap:8px;flex-wrap:wrap;margin-top:8px">${r.ok !== true ? `<button class="btn go" data-act="plok" data-id="${esc(r.id)}">ACCEPT</button>` : ''}${r.ok !== false ? `<button class="btn sm warn" data-act="plno" data-id="${esc(r.id)}">BLOCK</button>` : ''}
           ${r.ok === true ? `<button class="btn sm" data-act="plsaves" data-id="${esc(r.id)}">SAVES</button>` : ''}</div>
-          ${PL.open === r.id ? `<div class="row" style="gap:6px;margin-top:6px;flex-wrap:wrap">${(PL.saves || []).map(x => `<button class="btn sm" data-act="plview" data-id="${esc(r.id)}" data-k="${x.k}">SAVE ${x.k + 1}: ${esc(x.label)}</button>`).join('') || '<small class="dim">no saves yet</small>'}</div>` : ''}</td></tr>`).join('')}</table></div>` : '<p class="dim">No requests yet.</p>'}</div></div>`;
+        ${PL.open === r.id ? `<div class="row" style="gap:6px;margin-top:6px;flex-wrap:wrap">${(PL.saves || []).map(x => `<button class="btn sm" data-act="plview" data-id="${esc(r.id)}" data-k="${x.k}">SAVE ${x.k + 1}: ${esc(x.label)}</button>`).join('') || '<small class="dim">no saves yet</small>'}</div>` : ''}</div>`).join('') : '<p class="dim">No requests yet.</p>'}</div></div>`;
   },
   async mount() { if (!PL) await plLoad(); },
 };
